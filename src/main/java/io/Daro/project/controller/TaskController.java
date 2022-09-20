@@ -7,10 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 class TaskController {
@@ -32,5 +34,31 @@ class TaskController {
     ResponseEntity<List<Task>> readAllTasks(Pageable page){
         logger.info("Custom pageable");
         return  ResponseEntity.ok(repository.findAll(page).getContent());
+    }
+
+    @GetMapping("/tasks/{id}")
+    ResponseEntity<Task> readTask(@PathVariable int id){
+        Optional<Task> res = repository.findById(id);
+        /*if(!repository.existsById(id)){
+            return ResponseEntity.notFound().build();
+        }*/
+        return res.map(task -> ResponseEntity.ok(task)).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/tasks")
+    ResponseEntity<Task> createTask(@RequestBody @Valid Task task){
+        //return repository.save(task);
+        Task created = repository.save(task);
+        return ResponseEntity.created(URI.create(String.valueOf("/" + created.getId()))).body(created);
+    }
+
+    @PutMapping("/tasks/{id}")
+    ResponseEntity<?> updateTask(@PathVariable int id,  @RequestBody @Valid Task task) {
+        if (!repository.existsById(id)){
+            return ResponseEntity.notFound().build();
+    }
+        task.setId(id);
+        repository.save(task);
+        return ResponseEntity.noContent().build();
     }
 }
