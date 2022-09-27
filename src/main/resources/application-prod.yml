@@ -5,5 +5,5 @@ spring:
       url: 'jdbc:h2:mem:appdb'
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
 
