@@ -5,8 +5,9 @@ import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Entity
+//@Inheritance(InheritanceType.TABLE_PER_CLASS)
 @Table(name="tasks")
-public class Task {
+public class Task extends BaseAuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -55,13 +56,5 @@ public class Task {
         description = source.description;
         done = source.done;
         deadline = source.deadline;
-    }
-    @PrePersist
-    void prePersist(){
-        createdOn = LocalDateTime.now();
-    }
-    @PreUpdate
-    void preMerge(){
-        updatedOn = LocalDateTime.now();
     }
 }
