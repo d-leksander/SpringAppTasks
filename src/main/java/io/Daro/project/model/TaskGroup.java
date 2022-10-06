@@ -16,8 +16,7 @@ public class TaskGroup {
     @NotBlank(message = "Task group description must be not empty!!!")
     private String description;
     private boolean done;
-    @Embedded
-    private Audit audit = new Audit();
+
 
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "group")
