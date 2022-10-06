@@ -17,6 +17,9 @@ public class Task {
     private LocalDateTime deadline;
     @Embedded
     private Audit audit = new Audit();
+    @ManyToOne
+    @JoinColumn(name= "task_group_id")
+    private TaskGroup group;
 
     public Task() {
     }
@@ -52,9 +55,27 @@ public class Task {
     void setDeadline(final LocalDateTime deadline) {
         this.deadline = deadline;
     }
+
+  /*  Audit getAudit() {
+        return audit;
+    }*/
+
+    void setAudit(final Audit audit) {
+        this.audit = audit;
+    }
+
+    TaskGroup getGroup() {
+        return group;
+    }
+
+    void setGroup(final TaskGroup group) {
+        this.group = group;
+    }
+
     public  void updateFrom(Task source){
         description = source.description;
         done = source.done;
         deadline = source.deadline;
+        group = source.group;
     }
 }

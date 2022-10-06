@@ -3,6 +3,8 @@ package io.Daro.project.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 //@Inheritance(InheritanceType.TABLE_PER_CLASS)
@@ -16,6 +18,11 @@ public class TaskGroup {
     private boolean done;
     @Embedded
     private Audit audit = new Audit();
+
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "group")
+    private Set<Task> tasks;
+
 
     public TaskGroup() {
     }
@@ -44,9 +51,13 @@ public class TaskGroup {
         this.done = done;
     }
 
+     public Set<Task> getTasks() {
+        return tasks;
+    }
 
-
-
+    void setTasks(final Set<Task> tasks) {
+        this.tasks = tasks;
+    }
 
     /*public  void updateFrom(TaskGroup source){
         description = source.description;
