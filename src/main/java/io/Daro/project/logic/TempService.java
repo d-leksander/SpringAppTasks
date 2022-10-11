@@ -2,6 +2,7 @@ package io.Daro.project.logic;
 
 import io.Daro.project.model.Task;
 import io.Daro.project.model.TaskGroupRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,6 +10,7 @@ import java.util.stream.Collectors;
 class TempService {
 
 
+    @Autowired
     List<String> temp (TaskGroupRepository taskGroupRepository){
 
 
