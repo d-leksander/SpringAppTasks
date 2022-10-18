@@ -28,7 +28,7 @@ class ProjectSteps {
         this.project = project;
     }
 
-    int getId() {
+    public int getId() {
         return id;
     }
 
@@ -36,7 +36,7 @@ class ProjectSteps {
         this.id = id;
     }
 
-    String getDescription() {
+    public String getDescription() {
         return description;
     }
 
@@ -44,7 +44,7 @@ class ProjectSteps {
         this.description = description;
     }
 
-    Long getDays_to_deadline() {
+    public Long getDays_to_deadline() {
         return days_to_deadline;
     }
 
