@@ -24,7 +24,7 @@ class GroupTaskWriteModel {
         this.deadline = deadline;
     }
 
-    private Task toTask() {
+    public Task toTask() {
         return new Task(description,deadline);
     }
 }
