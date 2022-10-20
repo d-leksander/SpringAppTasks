@@ -39,7 +39,8 @@ public class Project {
         this.description = description;
     }
 
-    Set<ProjectSteps> getProjectSteps() {
+//nie zawsze jest to bezpieczne gdy mamy public
+    public Set<ProjectSteps> getProjectSteps() {
         return projectSteps;
     }
 
