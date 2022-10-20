@@ -6,7 +6,7 @@ import org.apache.catalina.Group;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-class GroupWriteModel {
+public class GroupWriteModel {
 
     private String description;
     private Set<GroupTaskWriteModel> tasks;
@@ -28,12 +28,14 @@ class GroupWriteModel {
 
     }
 
-    public TaskGroup toGroup(){
+    public TaskGroup toGroup() {
         var result = new TaskGroup();
         result.setDescription(description);
-        result.setTasks(tasks.stream()
+        result.setTasks(
+                tasks.stream()
                 .map(GroupTaskWriteModel::toTask)
-                .collect(Collectors.toSet()));
+                .collect(Collectors.toSet())
+        );
         return result;
     }
 }
