@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "project_steps")
-class ProjectSteps {
+public class ProjectSteps {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
