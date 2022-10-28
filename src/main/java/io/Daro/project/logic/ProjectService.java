@@ -33,6 +33,7 @@ class ProjectService {
         return isSave;
     }
 
+
     public GroupReadModel createGroup(int projectId, LocalDateTime deadline) {
         if(taskGroupRepository.existsByDoneIsFalseAndProject_Id(projectId)&& (!configurationProperties.getTemplate().isAllowMultipleTasks())){
             throw new IllegalStateException("Only unclosed group  in project is allowed");
