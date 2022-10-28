@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,7 +38,7 @@ class ProjectServiceTest {
 
         //when+ then
         //toTest.createGroup(0, LocalDateTime.now());
-        assertThatExceptionOfType(IllegalStateException.class)
+        assertThatIllegalStateException()
                 .isThrownBy(()->toTest.createGroup(0, LocalDateTime.now()));
 
 
