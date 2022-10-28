@@ -1,10 +1,12 @@
 package io.Daro.project.logic;
 
+import io.Daro.project.model.TaskConfigurationProperties;
 import io.Daro.project.model.TaskGroup;
 import io.Daro.project.model.TaskGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,8 +23,19 @@ class ProjectServiceTest {
         //given
         var mockGroupRepository = mock(TaskGroupRepository.class);
         when(mockGroupRepository.existsByDoneIsFalseAndProject_Id(anyInt())).thenReturn(true);
+        //and
         //assertTrue(mockGroupRepository.existsByDoneIsFalseAndProject_Id(1));
+        var mockTemplate = mock(TaskConfigurationProperties.AllowMultipleTasks.class);
+        when(mockTemplate.isAllowMultipleTasks()).thenReturn(false);
+        //and
+        var mockConfig = mock(TaskConfigurationProperties.class);
+        when(mockConfig.getTemplate()).thenReturn(mockTemplate);
+        //system under tests
+        var toTest = new ProjectService(null, mockGroupRepository, mockConfig);
+
         //when
+        toTest.createGroup(0, LocalDateTime.now());
+
         //then
 
 
