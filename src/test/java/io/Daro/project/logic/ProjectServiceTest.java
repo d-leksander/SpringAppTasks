@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
@@ -35,11 +35,12 @@ class ProjectServiceTest {
         when(mockConfig.getTemplate()).thenReturn(mockTemplate);
         //system under tests
         var toTest = new ProjectService(null, mockGroupRepository, mockConfig);
-
-        //when+ then
-        //toTest.createGroup(0, LocalDateTime.now());
-        assertThatIllegalStateException()
-                .isThrownBy(()->toTest.createGroup(0, LocalDateTime.now()));
+        //when
+        var exception = catchThrowable(() -> toTest.createGroup(0, LocalDateTime.now()));
+        //then
+        assertThat(exception)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("one unclosed group");
 
 
 
