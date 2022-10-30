@@ -23,6 +23,11 @@ public class Project {
     @OneToMany(mappedBy = "project")
     private Set<TaskGroup> taskGroups;
 
+
+    public Project() {
+
+    }
+
     public int getId() {
         return id;
     }
