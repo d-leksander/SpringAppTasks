@@ -34,9 +34,9 @@ class ProjectService {
     }
 
 
-    public GroupReadModel createGroup(int projectId, LocalDateTime deadline) {
-        if(taskGroupRepository.existsByDoneIsFalseAndProject_Id(projectId)&& (!configurationProperties.getTemplate().isAllowMultipleTasks())){
-            throw new IllegalStateException("Only unclosed group  in project is allowed");
+    public GroupReadModel createGroup(LocalDateTime deadline, int projectId) {
+        if(!configurationProperties.getTemplate().isAllowMultipleTasks() && taskGroupRepository.existsByDoneIsFalseAndProject_Id(projectId)){
+            throw new IllegalStateException("Only one unclosed group  in project is allowed");
         }
         TaskGroup result = projectRepository.findById(projectId)
                 .map(project -> {
@@ -48,7 +48,7 @@ class ProjectService {
                         ).collect(Collectors.toSet())
                         );
                 return targetGroup;
-                }).orElseThrow(() -> new IllegalArgumentException("Project with given is not found"));
+                }).orElseThrow(() -> new IllegalArgumentException("Project with given id not found"));
                 return new GroupReadModel(result);
     }
 
