@@ -8,8 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -88,6 +87,9 @@ class ProjectServiceTest {
         //given
         var mockRepository = mock(ProjectRepository.class);
         when(mockRepository.findById(anyInt())).thenReturn(Optional.empty());
+        //and
+        TaskGroupRepository inMemoryGroupRepo = inMemoryGroupRepository();
+        //and
         TaskConfigurationProperties mockConfig = ConfigurationReturning(true);
     }
 
@@ -107,5 +109,41 @@ class ProjectServiceTest {
         var mockConfig = mock(TaskConfigurationProperties.class);
         when(mockConfig.getTemplate()).thenReturn(mockTemplate);
         return mockConfig;
+    }
+
+    private TaskGroupRepository inMemoryGroupRepository() {
+        return new TaskGroupRepository(){
+            private Map<Integer, TaskGroup> map = new HashMap<>();
+            private int index = 0;
+            @Override
+            public List<TaskGroup> findAll() {
+                return new ArrayList<>(map.values());
+            }
+
+            @Override
+            public Optional<TaskGroup> findById(final Integer id) {
+                return Optional.ofNullable(map.get(id));
+            }
+
+            @Override
+            public TaskGroup save(final TaskGroup entity) {
+                if(entity.getId()==0){
+                    try{
+                        TaskGroup.class.getDeclaredField("id").set(entity, ++index);
+                    } catch (NoSuchFieldException | IllegalAccessException e){
+                        throw new RuntimeException(e);
+                    }
+                }
+                map.put(entity.getId(), entity);
+                return entity;
+            }
+
+            @Override
+            public boolean existsByDoneIsFalseAndProject_Id(final Integer projectId) {
+                return map.values().stream()
+                        .filter(group ->!group.isDone())
+                        .anyMatch(group -> group.getProject() != null && group.getProject().getId() == projectId);
+            }
+        };
     }
 }
