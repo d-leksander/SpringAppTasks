@@ -4,9 +4,11 @@ import io.Daro.project.model.ProjectRepository;
 import io.Daro.project.model.TaskConfigurationProperties;
 import io.Daro.project.model.TaskGroup;
 import io.Daro.project.model.TaskGroupRepository;
+import io.Daro.project.model.projection.GroupReadModel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -85,12 +87,25 @@ class ProjectServiceTest {
     @DisplayName("should create a new group from project")
     void createGroup_configurationOk_existingProject_createsAndSavesGroup(){
         //given
+        var today = LocalDate.now().atStartOfDay();
+        //and
         var mockRepository = mock(ProjectRepository.class);
         when(mockRepository.findById(anyInt())).thenReturn(Optional.empty());
         //and
-        TaskGroupRepository inMemoryGroupRepo = inMemoryGroupRepository();
+        InMemoryGroupRepository inMemoryGroupRepo = inMemoryGroupRepository();
+
+        int countBeforeCall = inMemoryGroupRepo.count();
         //and
         TaskConfigurationProperties mockConfig = ConfigurationReturning(true);
+        //system under test
+        var toTest = new ProjectService(mockRepository, inMemoryGroupRepo, mockConfig);
+        //when
+        GroupReadModel result = toTest.createGroup(today,1);
+        //then
+        assertThat(countBeforeCall-1)
+                .isNotEqualTo(inMemoryGroupRepo.count());
+
+
     }
 
 
@@ -111,10 +126,18 @@ class ProjectServiceTest {
         return mockConfig;
     }
 
-    private TaskGroupRepository inMemoryGroupRepository() {
-        return new TaskGroupRepository(){
+    private InMemoryGroupRepository inMemoryGroupRepository() {
+        return new InMemoryGroupRepository();
+    }
+
+    private static class InMemoryGroupRepository implements TaskGroupRepository {
+
             private Map<Integer, TaskGroup> map = new HashMap<>();
             private int index = 0;
+
+            public int count(){
+                return map.values().size();
+            }
             @Override
             public List<TaskGroup> findAll() {
                 return new ArrayList<>(map.values());
@@ -144,6 +167,6 @@ class ProjectServiceTest {
                         .filter(group ->!group.isDone())
                         .anyMatch(group -> group.getProject() != null && group.getProject().getId() == projectId);
             }
-        };
+
     }
 }
