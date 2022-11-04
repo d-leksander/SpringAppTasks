@@ -1,9 +1,6 @@
 package io.Daro.project.logic;
 
-import io.Daro.project.model.ProjectRepository;
-import io.Daro.project.model.TaskConfigurationProperties;
-import io.Daro.project.model.TaskGroup;
-import io.Daro.project.model.TaskGroupRepository;
+import io.Daro.project.model.*;
 import io.Daro.project.model.projection.GroupReadModel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -90,7 +88,10 @@ class ProjectServiceTest {
         var today = LocalDate.now().atStartOfDay();
         //and
         var mockRepository = mock(ProjectRepository.class);
-        when(mockRepository.findById(anyInt())).thenReturn(Optional.empty());
+        when(mockRepository.findById(anyInt()))
+                .thenReturn(Optional.of(
+                        projectWith("bar", Set.of(-1, -2))
+                ));
         //and
         InMemoryGroupRepository inMemoryGroupRepo = inMemoryGroupRepository();
 
@@ -102,13 +103,31 @@ class ProjectServiceTest {
         //when
         GroupReadModel result = toTest.createGroup(today,1);
         //then
+        assertThat(result.getDescription()).isEqualTo("bar");
+        assertThat(result.getDeadline()).isEqualTo(today.minusDays(1));
+        //in this place may be error!!!
+        assertThat(result.getTasks().stream().allMatch(task->task.getDescription().equals("foo")));
         assertThat(countBeforeCall-1)
                 .isNotEqualTo(inMemoryGroupRepo.count());
 
 
     }
 
-
+    private Project projectWith(String projectDescription, Set<Integer> daysToDeadline){
+        var result = mock(Project.class);
+        when(result.getDescription()).thenReturn(projectDescription);
+        when(result.getProjectSteps()).thenReturn(
+                daysToDeadline.stream()
+                        .map(days -> {
+                        var step = mock(ProjectSteps.class);
+                        when(step.getDescription()).thenReturn("foo");
+                        //I don't know, when I must used "value of" days
+                        when(step.getDays_to_deadline()).thenReturn(Long.valueOf(days));
+                        return step;
+                    }).collect(Collectors.toSet())
+        );
+        return result;
+    }
 
 
     private static TaskGroupRepository groupRepositoryReturning(final boolean result) {
