@@ -87,11 +87,10 @@ class ProjectServiceTest {
         //given
         var today = LocalDate.now().atStartOfDay();
         //and
+        var project = projectWith("bar", Set.of(-1, -2));
         var mockRepository = mock(ProjectRepository.class);
         when(mockRepository.findById(anyInt()))
-                .thenReturn(Optional.of(
-                        projectWith("bar", Set.of(-1, -2))
-                ));
+                .thenReturn(Optional.of(project));
         //and
         InMemoryGroupRepository inMemoryGroupRepo = inMemoryGroupRepository();
 
@@ -107,25 +106,31 @@ class ProjectServiceTest {
         assertThat(result.getDeadline()).isEqualTo(today.minusDays(1));
         //in this place may be error!!!
         assertThat(result.getTasks().stream().allMatch(task->task.getDescription().equals("foo")));
-        assertThat(countBeforeCall-1)
-                .isNotEqualTo(inMemoryGroupRepo.count());
+        assertThat(countBeforeCall+1)
+                //example in comment is clear too
+    //assertThat(countBeforeCall-1)
+                .isEqualTo(inMemoryGroupRepo.count());
+                //.isNotEqualTo(inMemoryGroupRepo.count());
 
 
     }
 
     private Project projectWith(String projectDescription, Set<Integer> daysToDeadline){
-        var result = mock(Project.class);
-        when(result.getDescription()).thenReturn(projectDescription);
-        when(result.getProjectSteps()).thenReturn(
-                daysToDeadline.stream()
+        //var result = mock(Project.class);
+        //when(result.getDescription()).thenReturn(projectDescription);
+        Set<ProjectSteps> steps = daysToDeadline.stream()
+        //when(result.getProjectSteps()).thenReturn(
+                //daysToDeadline.stream()
                         .map(days -> {
                         var step = mock(ProjectSteps.class);
                         when(step.getDescription()).thenReturn("foo");
                         //I don't know, when I must used "value of" days
                         when(step.getDays_to_deadline()).thenReturn(Long.valueOf(days));
                         return step;
-                    }).collect(Collectors.toSet())
-        );
+                    }).collect(Collectors.toSet());
+        var result = mock(Project.class);
+        when(result.getDescription()).thenReturn(projectDescription);
+        when(result.getProjectSteps()).thenReturn(steps);
         return result;
     }
 
@@ -171,7 +176,9 @@ class ProjectServiceTest {
             public TaskGroup save(final TaskGroup entity) {
                 if(entity.getId()==0){
                     try{
-                        TaskGroup.class.getDeclaredField("id").set(entity, ++index);
+                        var field = TaskGroup.class.getDeclaredField("id");
+                        field.setAccessible(true);
+                        field.set(entity, ++index);
                     } catch (NoSuchFieldException | IllegalAccessException e){
                         throw new RuntimeException(e);
                     }
