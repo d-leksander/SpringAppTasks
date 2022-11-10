@@ -1,90 +1,82 @@
 package io.Daro.project.logic;
 
-import io.Daro.project.model.ProjectRepository;
 import io.Daro.project.model.TaskGroup;
 import io.Daro.project.model.TaskGroupRepository;
 import io.Daro.project.model.TaskRepository;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.assertj.core.api.Assertions.catchThrowable;
 
 class TaskGroupServiceTest {
-
-
-
     @Test
-    @DisplayName("test1")
-    void existsByDoneIsFalseAndGroup_isTrue_illegal_State_Exception(){
-        //TaskGroupRepository mockGroupRepository = groupRepositoryReturning(true);
+    @DisplayName("should throw when undone tasks")
+    void toggleGroup_undoneTasks_throwsIllegalStateException() {
+        // given
         TaskRepository mockTaskRepository = taskRepositoryReturning(true);
-        var ToDoTest = new TaskGroupService(null, mockTaskRepository);
-        var exc = catchThrowable(()-> ToDoTest.toggleGroup(1));
+        // system under test
+        var toTest = new TaskGroupService(null, mockTaskRepository);
 
-        assertThat(exc)
+        // when
+        var exception = catchThrowable(() -> toTest.toggleGroup(1));
+
+        // then
+        assertThat(exception)
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("Group has not finished tasks");
     }
 
     @Test
-    @DisplayName("test2")
-    void find_ById_illegal_Argument_Exception(){
-        var mockRep = mock(TaskGroupRepository.class);
-        when(mockRep.findById(anyInt())).thenReturn(Optional.empty());
-
-        //TaskRepository mockTaskRepository = taskRepositoryReturning((true));
-        //TaskGroupRepository mockTaskGroupRepository = groupRepositoryReturning(1);
+    @DisplayName("should throw when no group")
+    void toggleGroup_wrongId_throwsIllegalArgumentException() {
+        // given
         TaskRepository mockTaskRepository = taskRepositoryReturning(false);
+        // and
+        var mockRepository = mock(TaskGroupRepository.class);
+        when(mockRepository.findById(anyInt())).thenReturn(Optional.empty());
+        // system under test
+        var toTest = new TaskGroupService(mockRepository, mockTaskRepository);
 
-        var toDoTest = new TaskGroupService(mockRep, mockTaskRepository);
-        //when
-        var exc = catchThrowable(() -> toDoTest.toggleGroup(0));
-        //then
-        assertThat(exc)
+        // when
+        var exception = catchThrowable(() -> toTest.toggleGroup(1));
+
+        // then
+        assertThat(exception)
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("is not found");
     }
 
     @Test
-    @DisplayName("test done")
-    void done_toggle_Group(){
-
-        var taskRep = taskRepositoryReturning(false);
-        var taskGroup = new TaskGroup();
-        var taskGroupRep = groupRepositoryReturning(Optional.of(taskGroup));
-        //var isDone = false;
-        taskGroup.setDone(false);
-
+    @DisplayName("should toggle group")
+    void toggleGroup_worksAsExpected() {
+        // given
         TaskRepository mockTaskRepository = taskRepositoryReturning(false);
-        TaskGroupRepository mockGroupRepository = groupRepositoryReturning(Optional.of(taskGroup));
+        // and
+        var group = new TaskGroup();
+        var beforeToggle = group.isDone();
+        // and
+        var mockRepository = mock(TaskGroupRepository.class);
+        when(mockRepository.findById(anyInt())).thenReturn(Optional.of(group));
+        // system under test
+        var toTest = new TaskGroupService(mockRepository, mockTaskRepository);
 
-        var toDoTest = new TaskGroupService(mockGroupRepository, mockTaskRepository);
+        // when
+        toTest.toggleGroup(0);
 
-        toDoTest.toggleGroup(taskGroup.getId());
-        assertThat(taskGroup.isDone()).isTrue();
-
+        // then
+        assertThat(group.isDone()).isEqualTo(!beforeToggle);
     }
 
-
-
-    private static TaskRepository taskRepositoryReturning (final boolean result) {
+    private TaskRepository taskRepositoryReturning(final boolean result) {
         var mockTaskRepository = mock(TaskRepository.class);
-        //when(mockGroupRepository.existsByDoneIsFalseAndProject_Id(anyInt())).thenReturn(result);
         when(mockTaskRepository.existsByDoneIsFalseAndGroup_Id(anyInt())).thenReturn(result);
         return mockTaskRepository;
     }
-    private static TaskGroupRepository groupRepositoryReturning(Optional<TaskGroup> taskGroup) {
-        var mockGroupRepository = mock(TaskGroupRepository.class);
-        when(mockGroupRepository.findById(anyInt())).thenReturn(taskGroup);
-        return mockGroupRepository;
-    }
-
-
 }
