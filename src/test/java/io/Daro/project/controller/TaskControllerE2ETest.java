@@ -42,4 +42,46 @@ class TaskControllerE2ETest {
 
     }
 
+    @Test
+    void httpGet_returnsTaskById() {
+
+        //given
+
+
+        repo.save(new Task("task1", LocalDateTime.now()));
+        repo.save(new Task("task2", LocalDateTime.now()));
+
+        //when
+        Task resultTask1 = restTemplate.getForObject("http://localhost:" + port + "/tasks/1", Task.class);
+        Task resultTask2 = restTemplate.getForObject("http://localhost:" + port + "/tasks/2", Task.class);
+
+        //then
+        String res1 = "description of task1";
+        String res2 = "description of task2";
+
+        assertThat(resultTask1).descriptionText().contains(res1);
+        assertThat(resultTask2).descriptionText().contains(res2);
+        assertThat(resultTask1).toString().equals(res1);
+        assertThat(resultTask2).toString().equals(res2);
+        assertThat(resultTask1).hasFieldOrProperty("description");
+        assertThat(resultTask2).hasFieldOrProperty("description");
+        //assertThat(resultTask1).hasNoNullFieldsOrProperties();
+        //assertThat(resultTask2).hasNoNullFieldsOrProperties();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
 }
