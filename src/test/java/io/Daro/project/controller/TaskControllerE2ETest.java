@@ -13,6 +13,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -58,7 +59,6 @@ class TaskControllerE2ETest {
 
         //given
 
-
         repo.save(new Task("task1", LocalDateTime.now()));
         repo.save(new Task("task2", LocalDateTime.now()));
 
@@ -76,22 +76,22 @@ class TaskControllerE2ETest {
         assertThat(resultTask2).toString().equals(res2);
         assertThat(resultTask1).hasFieldOrProperty("description");
         assertThat(resultTask2).hasFieldOrProperty("description");
-        //assertThat(resultTask1).hasNoNullFieldsOrProperties();
-        //assertThat(resultTask2).hasNoNullFieldsOrProperties();
 
     }
 
     @Test
     public void httpPost_createNewTask()
             throws IOException, JSONException {
+        //given
+        String URL = "http://localhost:" + port + "/tasks";
 
-        String URL = "http://localhost:" + port + "/tasks/1";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
         JSONObject JsonObject = new JSONObject();
         JsonObject.put("description", "task1");
         JsonObject.put("deadline", LocalDateTime.now());
+
+        //when
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> request =
                 new HttpEntity<String>(JsonObject.toString(), headers);
@@ -100,11 +100,39 @@ class TaskControllerE2ETest {
                 restTemplate.postForObject(URL, request, Task.class);
         String root = objectMapper.writeValueAsString(result);
 
+        //then
         assertNotNull(result);
         assertNotNull(root);
         assertThat(result).isNotNull();
         assertThat(result).toString().contains("task1");
     }
+
+    @Test
+    void httpPut_TryToUpdate() throws JSONException {
+
+            //given
+            String URL = "http://localhost:" + port + "/tasks/1";
+
+            JSONObject JsonObject = new JSONObject();
+            JsonObject.put("description", "taskToTryUpdate");
+            JsonObject.put("deadline", LocalDateTime.now());
+
+            //when
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            Task result = new Task("descriptionChange", LocalDateTime.now());
+            HttpEntity<Task> request =
+                    new HttpEntity<Task>(result, headers);
+            restTemplate.exchange(URL, HttpMethod.PUT, request, Task.class);
+            //then
+            assertThat(result).hasFieldOrPropertyWithValue("description", "descriptionChange");
+            assertThat(result).isNotNull();
+            assertThat(result).descriptionText().contains("descriptionChange");
+
+    }
+
+
 
 
 
