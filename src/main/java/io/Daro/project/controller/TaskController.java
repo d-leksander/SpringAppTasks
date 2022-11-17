@@ -18,8 +18,9 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-@Controller
+//@Controller
 //@ResponseBody
+@RestController
 class TaskController {
 
     private final TaskRepository repository;
@@ -30,22 +31,22 @@ class TaskController {
         this.repository = repository;
     }
     //@RequestMapping(method = RequestMethod.GET)
-    @RequestMapping(value = "/tasks", params = {"!sort", "!page", "!size"}, method = RequestMethod.GET)
-    @ResponseBody
+    @GetMapping(value = "/tasks", params = {"!sort", "!page", "!size"})
+    //@ResponseBody
     ResponseEntity<List<Task>> readAllTasks(){
         logger.warn("Exposing all the task");
         return  ResponseEntity.ok(repository.findAll());
     }
 
-    @RequestMapping(value = "/tasks", method = RequestMethod.GET)
-    @ResponseBody
+    @GetMapping(value = "/tasks")
+    //@ResponseBody
     ResponseEntity<List<Task>> readAllTasks(Pageable page){
         logger.info("Custom pageable");
         return  ResponseEntity.ok(repository.findAll(page).getContent());
     }
 
-    @RequestMapping(value = "/tasks/{id}", method = RequestMethod.GET)
-    @ResponseBody
+    @GetMapping(value = "/tasks/{id}")
+    //@ResponseBody
     ResponseEntity<Task> readTask(@PathVariable int id){
         Optional<Task> res = repository.findById(id);
         /*if(!repository.existsById(id)){
@@ -54,15 +55,15 @@ class TaskController {
         return res.map(task -> ResponseEntity.ok(task)).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @RequestMapping(value = "/tasks", method = RequestMethod.POST)
-    @ResponseBody
+    @PostMapping(value = "/tasks")
+    //@ResponseBody
     ResponseEntity<Task> createTask(@RequestBody @Valid Task task){
         //return repository.save(task);
         Task created = repository.save(task);
         return ResponseEntity.created(URI.create(String.valueOf("/" + created.getId()))).body(created);
     }
-    @RequestMapping(value = "/tasks/{id}", method = RequestMethod.PUT)
-    @ResponseBody
+    @PutMapping(value = "/tasks/{id}")
+    //@ResponseBody
     ResponseEntity<?> updateTask(@PathVariable int id,  @RequestBody @Valid Task toUpdate) {
         if (!repository.existsById(id)){
             return ResponseEntity.notFound().build();
@@ -76,8 +77,8 @@ class TaskController {
     }
 
     @Transactional
-    @RequestMapping(value = "/tasks/{id}", method = RequestMethod.PATCH)
-    @ResponseBody
+    @PatchMapping(value = "/tasks/{id}")
+    //@ResponseBody
     public ResponseEntity<?> toggleTask(@PathVariable int id) {
         if (!repository.existsById(id)){
             return ResponseEntity.notFound().build();
