@@ -1,14 +1,22 @@
 package io.Daro.project.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.Daro.project.model.Task;
 import io.Daro.project.model.TaskRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,6 +34,9 @@ class TaskControllerE2ETest {
 
     @Autowired
     TaskRepository repo;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Test
     void httpGet_returnsAllTasks(){
@@ -68,20 +79,33 @@ class TaskControllerE2ETest {
         //assertThat(resultTask1).hasNoNullFieldsOrProperties();
         //assertThat(resultTask2).hasNoNullFieldsOrProperties();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
+
+    @Test
+    public void httpPost_createNewTask()
+            throws IOException, JSONException {
+
+        String URL = "http://localhost:" + port + "/tasks/1";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        JSONObject JsonObject = new JSONObject();
+        JsonObject.put("description", "task1");
+        JsonObject.put("deadline", LocalDateTime.now());
+
+        HttpEntity<String> request =
+                new HttpEntity<String>(JsonObject.toString(), headers);
+
+        Task result =
+                restTemplate.postForObject(URL, request, Task.class);
+        String root = objectMapper.writeValueAsString(result);
+
+        assertNotNull(result);
+        assertNotNull(root);
+        assertThat(result).isNotNull();
+        assertThat(result).toString().contains("task1");
+    }
+
+
 
 }
