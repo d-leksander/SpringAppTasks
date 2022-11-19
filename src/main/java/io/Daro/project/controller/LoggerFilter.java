@@ -20,6 +20,7 @@ class LoggerFilter implements Filter{
             logger.info("[doFilter] " + httpRequest.getMethod() + httpRequest.getRequestURI());
         }
         chain.doFilter(request, response);
+        logger.info("[doFilter] 2");
     
     }
 
