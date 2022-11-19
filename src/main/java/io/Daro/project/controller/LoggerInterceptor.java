@@ -19,9 +19,9 @@ class LoggerInterceptor implements HandlerInterceptor {
         return true;
     }
 
-    @Override
+    /*@Override
     public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler, final ModelAndView modelAndView) throws Exception {
         //HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
         logger.info("[postHandle]");
-    }
+    }*/
 }
