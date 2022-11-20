@@ -1,15 +1,13 @@
 package io.Daro.project.controller;
 
+import io.Daro.project.logic.TaskService;
 import io.Daro.project.model.Task;
 //import io.Daro.project.model.TaskRepository;
 import io.Daro.project.model.TaskRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +15,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 //@Controller
 //@ResponseBody
@@ -28,15 +27,19 @@ class TaskController {
     private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
 
     //@Autowired
-    TaskController(final TaskRepository repository) {
+    TaskController(final TaskRepository repository, final TaskService services) {
         this.repository = repository;
+        this.services = services;
     }
     //@RequestMapping(method = RequestMethod.GET)
+    private final TaskService services;
     @GetMapping(params = {"!sort", "!page", "!size"})
     //@ResponseBody
-    ResponseEntity<List<Task>> readAllTasks(){
+
+    CompletableFuture<ResponseEntity<List<Task>>> readAllTasks(){
         logger.warn("Exposing all the task");
-        return  ResponseEntity.ok(repository.findAll());
+        return services.findAllAsync().thenApply(ResponseEntity::ok);
+        // return  ResponseEntity.ok(repository.findAll());
     }
 
     @GetMapping
