@@ -1,9 +1,6 @@
 package io.Daro.project.logic;
 
-import io.Daro.project.model.TaskConfigurationProperties;
-import io.Daro.project.model.TaskGroup;
-import io.Daro.project.model.TaskGroupRepository;
-import io.Daro.project.model.TaskRepository;
+import io.Daro.project.model.*;
 import io.Daro.project.model.projection.GroupReadModel;
 import io.Daro.project.model.projection.GroupWriteModel;
 import org.springframework.stereotype.Service;
@@ -24,10 +21,12 @@ public class TaskGroupService {
         this.taskRepository = taskRepository;
     }
     public GroupReadModel createGroup(GroupWriteModel source) {
-        TaskGroup result = repository.save(source.toGroup());
+        return createGroup(source,null);
+    }
+    GroupReadModel createGroup(final GroupWriteModel source, final Project project) {
+        TaskGroup result = repository.save(source.toGroup(project));
         return new GroupReadModel(result);
     }
-
     public List<GroupReadModel> readAll() {
         return repository.findAll().stream()
                 .map(GroupReadModel::new)
@@ -43,4 +42,6 @@ public class TaskGroupService {
         result.setDone((!result.isDone()));
         repository.save(result);
     }
+
+
 }

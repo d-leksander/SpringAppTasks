@@ -40,7 +40,7 @@ public class Project {
         return description;
     }
 
-    void setDescription(final String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -49,7 +49,7 @@ public class Project {
         return projectSteps;
     }
 
-    void setProjectSteps(final Set<ProjectSteps> projectSteps) {
+    public void setProjectSteps(final Set<ProjectSteps> projectSteps) {
         this.projectSteps = projectSteps;
     }
 

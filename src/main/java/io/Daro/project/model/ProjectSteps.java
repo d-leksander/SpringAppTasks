@@ -40,7 +40,7 @@ public class ProjectSteps {
         return description;
     }
 
-    void setDescription(final String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -48,7 +48,7 @@ public class ProjectSteps {
         return days_to_deadline;
     }
 
-    void setDays_to_deadline(final Long days_to_deadline) {
+    public void setDays_to_deadline(final Long days_to_deadline) {
         this.days_to_deadline = days_to_deadline;
     }
 }

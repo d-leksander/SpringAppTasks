@@ -4,6 +4,7 @@ import io.Daro.project.model.*;
 import io.Daro.project.model.projection.GroupReadModel;
 import io.Daro.project.model.projection.GroupTaskWriteModel;
 import io.Daro.project.model.projection.GroupWriteModel;
+import io.Daro.project.model.projection.ProjectWriteModel;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,9 +30,9 @@ class ProjectService {
     public List<Project> readAll() {
         return projectRepository.findAll();
     }
-    public Project save(final Project isSave){
-        projectRepository.save(isSave);
-        return isSave;
+    public Project save(final ProjectWriteModel isSave){
+        return projectRepository.save(isSave.toProject());
+        //return isSave;
     }
 
 
@@ -56,7 +57,7 @@ class ProjectService {
                                     }
                         ).collect(Collectors.toSet())
                     );
-                    return taskGroupService.createGroup(targetGroup);
+                    return taskGroupService.createGroup(targetGroup, project);
                     //targetGroup.setProject(project);
 
                     //return taskGroupRepository.save(targetGroup);
