@@ -1,6 +1,5 @@
 package io.Daro.project.controller;
 
-import io.Daro.project.logic.TaskService;
 import io.Daro.project.model.Task;
 //import io.Daro.project.model.TaskRepository;
 import io.Daro.project.model.TaskRepository;
@@ -27,19 +26,18 @@ class TaskController {
     private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
 
     //@Autowired
-    TaskController(final TaskRepository repository, final TaskService services) {
+    TaskController(final TaskRepository repository) {
         this.repository = repository;
-        this.services = services;
     }
     //@RequestMapping(method = RequestMethod.GET)
-    private final TaskService services;
+
     @GetMapping(params = {"!sort", "!page", "!size"})
     //@ResponseBody
 
-    CompletableFuture<ResponseEntity<List<Task>>> readAllTasks(){
+    ResponseEntity<List<Task>> readAllTasks(){
         logger.warn("Exposing all the task");
-        return services.findAllAsync().thenApply(ResponseEntity::ok);
-        // return  ResponseEntity.ok(repository.findAll());
+        //return services.findAllAsync().thenApply(ResponseEntity::ok);
+        return  ResponseEntity.ok(repository.findAll());
     }
 
     @GetMapping

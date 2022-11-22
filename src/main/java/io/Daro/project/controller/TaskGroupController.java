@@ -1,10 +1,7 @@
 package io.Daro.project.controller;
 
 import io.Daro.project.logic.TaskGroupService;
-import io.Daro.project.logic.TaskService;
 import io.Daro.project.model.Task;
-import io.Daro.project.model.TaskGroup;
-import io.Daro.project.model.TaskGroupRepository;
 import io.Daro.project.model.TaskRepository;
 import io.Daro.project.model.projection.GroupReadModel;
 import io.Daro.project.model.projection.GroupWriteModel;
@@ -17,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 
 @RestController
