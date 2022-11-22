@@ -21,7 +21,7 @@ import java.util.List;
 class TaskGroupController {
 
     private final TaskRepository groupRepository;
-    private  final TaskGroupService groupService;
+    private final TaskGroupService groupService;
     private static final Logger logger = LoggerFactory.getLogger(TaskGroupController.class);
 
     TaskGroupController(final TaskRepository groupRepository, final TaskGroupService groupService) {
@@ -31,20 +31,20 @@ class TaskGroupController {
 
 
     @PostMapping
-    ResponseEntity<GroupReadModel> createGroup(@RequestBody @Valid GroupWriteModel create){
+    ResponseEntity<GroupReadModel> createGroup(@RequestBody @Valid GroupWriteModel create) {
         GroupReadModel result = groupService.createGroup(create);
         //return ResponseEntity.created(URI.create(String.valueOf("/" + created.getId()))).body(created);
         return ResponseEntity.created(URI.create("/" + result.getId())).body(groupService.createGroup(create));
     }
 
     @GetMapping
-    ResponseEntity<List<GroupReadModel>> readAllGroups(){
+    ResponseEntity<List<GroupReadModel>> readAllGroups() {
         //logger.warn("Exposing all the group");
         return ResponseEntity.ok(groupService.readAll());
     }
 
     @GetMapping(value = "/{id}")
-    ResponseEntity<List<Task>> readAllTasksFromGroup(@PathVariable int id){
+    ResponseEntity<List<Task>> readAllTasksFromGroup(@PathVariable int id) {
         return ResponseEntity.ok(groupRepository.findAllByGroup_Id(id));
 
     }
@@ -52,8 +52,17 @@ class TaskGroupController {
     @Transactional
     @PatchMapping(value = "/{id}")
     public ResponseEntity<?> toggleGroup(@PathVariable int id) {
-      groupService.toggleGroup(id);
+        groupService.toggleGroup(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    ResponseEntity<?> handleIllegalArgument(IllegalArgumentException e) {
+        return ResponseEntity.notFound().build();
+}
+    @ExceptionHandler(IllegalStateException.class)
+    ResponseEntity<?> handleIllegalState(IllegalStateException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 
 
