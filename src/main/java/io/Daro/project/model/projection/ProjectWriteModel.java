@@ -5,6 +5,7 @@ import io.Daro.project.model.ProjectSteps;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -13,7 +14,11 @@ public class ProjectWriteModel {
     @NotBlank(message = "Project's description must not be empty")
     private String description;
     @Valid
-    private List<ProjectSteps> steps;
+    private List<ProjectSteps> steps = new ArrayList<>();
+
+    public ProjectWriteModel(){
+        steps.add(new ProjectSteps());
+    }
 
     public String getDescription() {
         return description;
