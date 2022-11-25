@@ -1,5 +1,6 @@
 package io.Daro.project.controller;
 
+import io.Daro.project.logic.ProjectService;
 import io.Daro.project.model.ProjectSteps;
 import io.Daro.project.model.projection.ProjectWriteModel;
 import org.springframework.stereotype.Controller;
@@ -12,11 +13,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/projects")
 class ProjectController {
+
+    private final ProjectService service;
+
+    ProjectController(final ProjectService service) {
+        this.service = service;
+    }
+
     @GetMapping
     String showProject(Model model) {
         //var projectToEdit = new ProjectWriteModel();
         //projectToEdit.setDescription("test");
         model.addAttribute("project", new ProjectWriteModel());
+        return "projects";
+    }
+
+    @PostMapping
+    String addProject(@ModelAttribute("project") ProjectWriteModel current, Model model){
+        service.save(current);
+        model.addAttribute("project", new ProjectWriteModel());
+        model.addAttribute("message", "dodano projekt");
         return "projects";
     }
 
