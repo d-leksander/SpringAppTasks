@@ -1,6 +1,7 @@
 package io.Daro.project.controller;
 
 import io.Daro.project.logic.ProjectService;
+import io.Daro.project.model.Project;
 import io.Daro.project.model.ProjectSteps;
 import io.Daro.project.model.projection.ProjectWriteModel;
 import org.springframework.stereotype.Controller;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/projects")
@@ -40,6 +43,10 @@ class ProjectController {
     String addProjectStep(@ModelAttribute("project") ProjectWriteModel current) {
         current.getSteps().add(new ProjectSteps());
         return "projects";
+    }
+    @ModelAttribute("projects")
+    List<Project> getProjects() {
+        return service.readAll();
     }
 
 }
