@@ -44,7 +44,7 @@ class ProjectController {
         current.getSteps().add(new ProjectSteps());
         return "projects";
     }
-    @ModelAttribute("projects")
+    @ModelAttribute("projects")//
     List<Project> getProjects() {
         return service.readAll();
     }
