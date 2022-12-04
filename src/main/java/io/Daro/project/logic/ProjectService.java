@@ -55,7 +55,7 @@ public class ProjectService {
 
                                                 //projectSteps.getDescription(), deadline.plusDays(projectSteps.getDays_to_deadline()))
                                     }
-                        ).collect(Collectors.toSet())
+                        ).collect(Collectors.toList())
                     );
                     return taskGroupService.createGroup(targetGroup, project);
                     //targetGroup.setProject(project);

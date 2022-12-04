@@ -3,7 +3,9 @@ package io.Daro.project.model.projection;
 import io.Daro.project.model.Task;
 import io.Daro.project.model.TaskGroup;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,7 +16,9 @@ public class GroupReadModel {
     private String description;
     /**deadline from the latest task group*/
     private LocalDateTime deadline;
-    private Set<GroupTaskReadModel> tasks;
+
+    @NotBlank(message = "Task group description must be not empty!!!")
+    private List<GroupTaskReadModel> tasks;
 
 
     public GroupReadModel(TaskGroup source){
@@ -27,7 +31,7 @@ public class GroupReadModel {
                 .ifPresent(date->deadline=date);
         tasks = source.getTasks().stream()
                 .map(GroupTaskReadModel::new)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
 
@@ -55,11 +59,11 @@ public class GroupReadModel {
         this.deadline = deadline;
     }
 
-    public Set<GroupTaskReadModel> getTasks() {
+    public List<GroupTaskReadModel> getTasks() {
         return tasks;
     }
 
-    public void setTasks(final Set<GroupTaskReadModel> tasks) {
+    public void setTasks(final List<GroupTaskReadModel> tasks) {
         this.tasks = tasks;
     }
 
