@@ -96,15 +96,6 @@ class TaskGroupController {
         return ResponseEntity.noContent().build();
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    ResponseEntity<?> handleIllegalArgument(IllegalArgumentException e) {
-        return ResponseEntity.notFound().build();
-}
-    @ExceptionHandler(IllegalStateException.class)
-    ResponseEntity<?> handleIllegalState(IllegalStateException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
-    }
-
     @ModelAttribute("groups")//
     List<GroupReadModel> toGroups() {
         return groupService.readAll();
