@@ -5,6 +5,7 @@ import io.Daro.project.model.Task;
 import io.Daro.project.model.TaskRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +15,6 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 //@Controller
 //@ResponseBody
@@ -23,11 +23,13 @@ import java.util.concurrent.CompletableFuture;
 class TaskController {
 
     private final TaskRepository repository;
+    private final ApplicationEventPublisher eventPublisher;
     private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
 
     //@Autowired
-    TaskController(final TaskRepository repository) {
+    TaskController(final TaskRepository repository, final ApplicationEventPublisher eventPublisher) {
         this.repository = repository;
+        this.eventPublisher = eventPublisher;
     }
     //@RequestMapping(method = RequestMethod.GET)
 
@@ -90,7 +92,9 @@ class TaskController {
         if (!repository.existsById(id)){
             return ResponseEntity.notFound().build();
     }
-        repository.findById(id).ifPresent(task -> task.setDone(!task.isDone()));
+        repository.findById(id)
+                .map(Task::toggle)
+                .ifPresent(eventPublisher::publishEvent);
         return ResponseEntity.noContent().build();
     }
 }
