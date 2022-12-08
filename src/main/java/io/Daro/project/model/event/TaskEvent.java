@@ -12,11 +12,11 @@ public abstract class TaskEvent {
     }
 
     private int taskId;
-    private Instant occurence;
+    private Instant occurrence;
 
     TaskEvent(final int taskId, Clock clock) {
         this.taskId = taskId;
-        this.occurence = Instant.now(clock);
+        this.occurrence = Instant.now(clock);
     }
 
 
@@ -25,13 +25,13 @@ public abstract class TaskEvent {
         return taskId;
     }
 
-    public Instant getOccurence() {
-        return occurence;
+    public Instant getOccurrence() {
+        return occurrence;
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "{" +"taskId=" + taskId + ", occurence=" + occurence + '}';
+        return getClass().getSimpleName() + "{" +"taskId=" + taskId + ", occurrence=" + occurrence + '}';
     }
 }
 
