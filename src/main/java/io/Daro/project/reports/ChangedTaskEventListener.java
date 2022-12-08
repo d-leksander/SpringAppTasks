@@ -2,6 +2,7 @@ package io.Daro.project.reports;
 
 
 import io.Daro.project.model.event.TaskDone;
+import io.Daro.project.model.event.TaskEvent;
 import io.Daro.project.model.event.TaskUndone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,13 +13,24 @@ import org.springframework.stereotype.Service;
 class ChangedTaskEventListener {
     public static final Logger logger = LoggerFactory.getLogger(ChangedTaskEventListener.class);
 
+    private final PersistedTaskEventRepository repository;
+
+    ChangedTaskEventListener(final PersistedTaskEventRepository repository) {
+        this.repository = repository;
+    }
+
     @EventListener
     public void on(TaskDone event){
-        logger.info("Got " + event);
+        onChanged(event);
     }
 
     @EventListener
     public void on(TaskUndone event){
+        //logger.info("Got " + event);
+        onChanged(event);
+    }
+    private void onChanged(final TaskEvent event) {
         logger.info("Got " + event);
+        repository.save(new PersistedTaskEvent(event));
     }
 }
