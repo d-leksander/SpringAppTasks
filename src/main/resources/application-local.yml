@@ -14,3 +14,9 @@ management:
     web:
       exposure:
         include: '*'
+keycloak:
+  auth-serer-url: 'http://localhost:8180/auth'
+  realm: 'AppTasks'
+  resource: 'app-tasks-client'
+  public-client: true
+
