@@ -9,13 +9,17 @@ spring:
       ddl-auto: validate
   flyway:
     baseline-on-migrate: true
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+
 management:
   endpoints:
     web:
       exposure:
         include: '*'
 keycloak:
-  auth-serer-url: 'http://localhost:8180/auth'
+  auth-server-url: 'http://localhost:8180/auth'
   realm: 'AppTasks'
   resource: 'app-tasks-client'
   public-client: true
