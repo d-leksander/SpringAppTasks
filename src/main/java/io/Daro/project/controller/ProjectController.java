@@ -6,12 +6,14 @@ import io.Daro.project.model.ProjectSteps;
 import io.Daro.project.model.projection.ProjectWriteModel;
 import io.micrometer.core.annotation.Timed;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,11 +28,17 @@ class ProjectController {
     }
 
     @GetMapping
-    String showProject(Model model) {
+    String showProject(Model model, Authentication auth) {
         //var projectToEdit = new ProjectWriteModel();
         //projectToEdit.setDescription("test");
-        model.addAttribute("project", new ProjectWriteModel());
-        return "projects";
+        if (auth.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority()
+                        .equals("ROLE_ADMIN"))) {
+            model.addAttribute("project", new ProjectWriteModel());
+            return "projects";
+        }
+        return "index";
     }
 
     @PostMapping
